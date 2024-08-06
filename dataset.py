@@ -18,7 +18,12 @@ import random
 import numpy as np
 from PIL import Image
 import torchvision.transforms as T
-from torch._utils import _accumulate
+#from torch._utils import _accumulate
+from itertools import accumulate
+
+def _accumulate(iterable):
+    return list(accumulate(iterable))
+
 from torch.utils.data import Dataset, ConcatDataset, Subset
 
 class Batch_Balanced_Dataset(object):
