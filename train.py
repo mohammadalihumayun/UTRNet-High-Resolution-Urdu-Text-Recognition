@@ -97,6 +97,12 @@ def train(opt, device):
             model.load_state_dict(torch.load(opt.saved_model))
     logger.log("Model:")
     logger.log(model)
+    """ freezing"""
+    if opt.freeze_visual=='yes':
+        for name, param in model.named_parameters():
+            if 'FeatureExtraction'  in name:  # 'in the name of the cnn layers'
+                param.requires_grad = False
+            #print(name)
 
     """ setup loss """
     if 'CTC' in opt.Prediction:
@@ -265,6 +271,8 @@ if __name__ == '__main__':
     parser.add_argument('--output_channel', type=int, default=512,
                         help='the number of output channel of Feature extractor')
     parser.add_argument('--hidden_size', type=int, default=256, help='the size of the LSTM hidden state')
+    """ freezing pretrained cnn for visual features"""
+    parser.add_argument('--freeze_visual', type=str, default='no', help='yes to freeze')
     """ GPU Selection """
     parser.add_argument('--device_id', type=str, default=None, help='cuda device ID')
     
