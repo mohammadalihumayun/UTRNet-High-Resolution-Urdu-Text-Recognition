@@ -50,6 +50,7 @@ class CTCLabelConverter(object):
         batch_text = torch.LongTensor(len(text), batch_max_length).fill_(0)
         for i, t in enumerate(text):
             text = list(t)
+            text = [char for char in text if char in self.dict]
             text = [self.dict[char] for char in text]
             batch_text[i][:len(text)] = torch.LongTensor(text)
         return (batch_text, torch.IntTensor(length))
