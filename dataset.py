@@ -174,6 +174,7 @@ class LmdbDataset(Dataset):
                 self.nSamples = len(self.filtered_index_list)
         if self.transform is None:
             self.transform = []
+        '''
         if self.rand_aug:
             from modules.augmentation import rand_augment_transform,salt_and_pepper_noise, random_border_crop, random_resize
             self.transform.append(rand_augment_transform())
@@ -186,7 +187,7 @@ class LmdbDataset(Dataset):
             if random.random()<0.25:
                 self.transform.append(lambda img: random_resize(img))
             self.transform = T.Compose(self.transform)
-
+        '''
     def __len__(self):
         return self.nSamples
 
