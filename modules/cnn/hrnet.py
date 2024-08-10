@@ -49,7 +49,7 @@ class BasicBlock(nn.Module):
     def forward(self, x):
         identity = x
         x = self.conv(x)
-        x += identity
+        x = x + identity
         return self.relu(x)
 
 # Bottleneck - Does not change shape of the input, increases channels to 4*out_ch (instead of out_ch)
@@ -71,7 +71,7 @@ class Bottleneck(nn.Module):
         x = self.conv(x)
         if self.downsampling:
             identity = self.downsampling(identity)
-        x += identity
+        x = x + identity
         return self.relu(x)
 
 # UpSampling - Reduces the number of channels to ch // up_factor and increases input size up_factor times
@@ -145,7 +145,7 @@ class HRBlock(nn.Module):
             if i == self.index:
                 x = 0
                 for t, m in zip(parallel_res_list, self.down_conv_lists[-1]):
-                    x += m(t)
+                    x = x + m(t)
             else:
                 x = parallel_res_list[i]
                 # Upsampling all streams (except the uppermost), to all possible dimensions above it till the highest stream
@@ -153,15 +153,15 @@ class HRBlock(nn.Module):
                     res_list = parallel_res_list[i+1:]
                     up_x = 0
                     for t, m in zip(res_list, self.up_conv_lists[i]):
-                        up_x += m(t)
-                    x += up_x
+                        up_x = x + m(t)
+                    x = x + up_x
                 # Downsampling all streams (except the lowest) to all possible dimensions below it till the lowest stream dimension
                 if i != 0:
                     res_list = parallel_res_list[:i]
                     down_x = 0
                     for t, m in zip(res_list, self.down_conv_lists[i - 1]):
-                        down_x += m(t)
-                    x += down_x
+                        down_x = x + m(t)
+                    x = x + down_x
             x = self.relu(x)
             final_res_list.append(x)
         return final_res_list
